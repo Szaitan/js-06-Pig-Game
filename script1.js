@@ -2,10 +2,12 @@
 // Player 0 Data
 const sectionPlayer0 = document.querySelector('.player--0');
 const scoreElPlayer0 = document.getElementById('score--0');
+const currentscoreElPlayer0 = document.getElementById('score--0');
 
 // Player 1 Data
 const sectionPlayer1 = document.querySelector('.player--1');
 const scoreElPlayer1 = document.getElementById('score--1');
+const currentscoreElPlayer1 = document.getElementById('score--1');
 
 // General Data
 let diceImage = document.querySelector('.dice');
@@ -27,30 +29,45 @@ function showDice() {
 init();
 let activePlayer = 0;
 let totalScore = [0, 0];
+let playersCurrentScore = [0, 0];
+let play = true;
 
 function rollDice() {
-  if (diceImage.classList.contains('hidden')) showDice();
-  let rollValue = Math.trunc(Math.random() * 6 + 1);
-  diceImage.src = `dice-${rollValue}.png`;
-  document.getElementById(`current--${activePlayer}`).textContent = rollValue;
-  if (rollValue !== 1) {
-    totalScore[activePlayer] += rollValue;
-    document.getElementById(`score--${activePlayer}`).textContent =
-      totalScore[activePlayer];
-  } else {
-    totalScore[activePlayer] = 0;
-    document.getElementById(`score--${activePlayer}`).textContent =
-      totalScore[activePlayer];
-    activePlayer = activePlayer === 0 ? 1 : 0;
-    sectionPlayer0.classList.toggle('player--active');
-    sectionPlayer1.classList.toggle('player--active');
+  if (play) {
+    if (diceImage.classList.contains('hidden')) showDice();
+    let rollValue = Math.trunc(Math.random() * 6 + 1);
+    diceImage.src = `dice-${rollValue}.png`;
+    if (rollValue !== 1) {
+      playersCurrentScore[activePlayer] += rollValue;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        playersCurrentScore[activePlayer];
+    } else {
+      playersCurrentScore[activePlayer] = 0;
+      document.getElementById(`current--${activePlayer}`).textContent =
+        playersCurrentScore[activePlayer];
+      activePlayer = activePlayer === 0 ? 1 : 0;
+      sectionPlayer0.classList.toggle('player--active');
+      sectionPlayer1.classList.toggle('player--active');
+    }
   }
 }
 
 function holdScore() {
-  sectionPlayer0.classList.toggle('player--active');
-  sectionPlayer1.classList.toggle('player--active');
-  activePlayer = activePlayer === 0 ? 1 : 0;
+  if (play) {
+    totalScore[activePlayer] += playersCurrentScore[activePlayer];
+    document.getElementById(`score--${activePlayer}`).textContent =
+      totalScore[activePlayer];
+    if (totalScore[activePlayer] >= 100) {
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.toggle('player--winner');
+      play = false;
+    } else {
+      sectionPlayer0.classList.toggle('player--active');
+      sectionPlayer1.classList.toggle('player--active');
+      activePlayer = activePlayer === 0 ? 1 : 0;
+    }
+  }
 }
 
 function newGame() {

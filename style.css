@@ -169,3 +169,7 @@ main {
 .hidden {
   display: none;
 }
+
+.btn-disable {
+  cursor: not-allowed;
+}
